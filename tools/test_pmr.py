@@ -52,7 +52,7 @@ from PySide.QtCore import QSettings
 
 from mapclient.tools.pmr.pmrtool import PMRTool
 from mapclient.tools.pmr.pmrtool import PMRToolError
-from mapclient.settings.info import PMRInfo
+from mapclient.settings.general import PMRInfo
 
 workspace_home = json.dumps({
     u'workspace-home': {

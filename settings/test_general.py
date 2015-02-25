@@ -19,19 +19,24 @@ This file is part of MAP Client. (http://launchpad.net/mapclient)
 '''
 import unittest
 
-def suite():
-    tests = unittest.TestSuite()
+import os, sys
 
-    from tests.settings.test_info import InfoTestCase
-    tests.addTests(unittest.TestLoader().loadTestsFromTestCase(InfoTestCase))
-    
-    from tests.settings.test_general import GeneralTestCase
-    tests.addTests(unittest.TestLoader().loadTestsFromTestCase(GeneralTestCase))
+from PySide import QtGui
 
-    return tests
+from mapclient.settings.info import setApplicationsSettings
+from mapclient.settings.general import getLogDirectory
 
-def load_tests(loader, tests, pattern):
-    return suite()
+test_app = QtGui.QApplication.instance()
+if test_app is None:
+    test_app = QtGui.QApplication(sys.argv)
 
-if __name__ == '__main__':
-    unittest.TextTestRunner().run(suite())
+setApplicationsSettings(test_app)
+
+class GeneralTestCase(unittest.TestCase):
+
+
+    def testGetLogLocation(self):
+        ll = getLogDirectory()
+        self.assertTrue(os.path.exists(ll))
+        self.assertTrue(os.access(ll, os.W_OK | os.X_OK))
+        
