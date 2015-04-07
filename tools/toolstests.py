@@ -1,4 +1,3 @@
-#!/usr/bin/python
 '''
 MAP Client, a program to generate detailed musculoskeletal models for OpenSim.
     Copyright (C) 2012  University of Auckland
@@ -23,30 +22,31 @@ import unittest
 def suite():
     tests = unittest.TestSuite()
 
-    from settings import settingstests
-    tests.addTests(settingstests.suite())
-
-    from widgets import widgetstests
-    tests.addTests(widgetstests.suite())
-
-    from core import coretests
-    tests.addTests(coretests.suite())
+    from tests.tools.test_annotation import AnnotationToolTestCase
+    tests.addTests(unittest.TestLoader().loadTestsFromTestCase(AnnotationToolTestCase))
     
-    from tools import toolstests
-    tests.addTests(toolstests.suite())
-
-    from plugins.imagesourcestep import imagesourcesteptests
-    tests.addTests(imagesourcesteptests.suite())
+    from tests.tools.test_plugin_updater import PluginUpdaterTestCase
+    tests.addTests(unittest.TestLoader().loadTestsFromTestCase(PluginUpdaterTestCase))
     
-    from plugins.pointcloudserializerstep import pointcloudserializertests
-    tests.addTests(pointcloudserializertests.suite())
+    from tests.tools.test_pmr_core import TokenHelperTestCase
+    tests.addTests(unittest.TestLoader().loadTestsFromTestCase(TokenHelperTestCase))
+    
+    from tests.tools.test_pmr_gui import PMRSearchDialogTestCase
+    tests.addTests(unittest.TestLoader().loadTestsFromTestCase(PMRSearchDialogTestCase))
+    
+    from tests.tools.test_pmr_settings import PMRToolSettingsTestCase
+    tests.addTests(unittest.TestLoader().loadTestsFromTestCase(PMRToolSettingsTestCase))
+    
+    from tests.tools.test_pmr import PMRToolTestCase
+    tests.addTests(unittest.TestLoader().loadTestsFromTestCase(PMRToolTestCase))
+    
+    from tests.tools.test_wizard import WizardTestCase
+    tests.addTests(unittest.TestLoader().loadTestsFromTestCase(WizardTestCase))
     
     return tests
 
 def load_tests(loader, tests, pattern):
     return suite()
 
-
 if __name__ == '__main__':
-    #unittest.main()
     unittest.TextTestRunner().run(suite())

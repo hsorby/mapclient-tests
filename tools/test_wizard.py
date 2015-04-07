@@ -29,7 +29,9 @@ from mapclient.tools.pluginwizard import wizarddialog
 from mapclient.tools.pluginwizard.skeleton import SkeletonOptions, Skeleton
 from mapclient.tools.pluginwizard.skeleton import PLUGIN_NAMESPACE
 
-if QtGui.qApp == None: QtGui.QApplication([])
+from tests.utils import createTestApplication
+
+createTestApplication()
 import mapclient.widgets.resources_rc
 
 from tests import utils
@@ -161,7 +163,6 @@ class WizardTestCase(_TestCase):
         config_contents = open(config_file).read()
         self.assertIn('validate', config_contents)
 
-
     def testSkeleton2(self):
 
         local_package_name = PLUGIN_PACKAGE_NAME
@@ -197,7 +198,6 @@ class WizardTestCase(_TestCase):
 
         resources_file = os.path.join(step_dir, 'resources_rc.py')
         self.assertTrue(os.path.exists(resources_file))
-
 
     def testSkeleton3(self):
 
@@ -242,7 +242,6 @@ class WizardTestCase(_TestCase):
         config_file = os.path.join(step_dir, 'configuredialog.py')
         self.assertTrue(os.path.exists(config_file))
 
-
     def testSkeleton4(self):
 
         local_package_name = PLUGIN_PACKAGE_NAME
@@ -267,11 +266,11 @@ class WizardTestCase(_TestCase):
 
         s = Skeleton(options)
         s.write()
-
+ 
         self.assertTrue(os.path.exists(package_dir))
         step_file = os.path.join(step_dir, 'step.py')
         self.assertTrue(os.path.exists(step_file))
-
+ 
         file_contents = open(step_file).read()
         self.assertIn('octopus', file_contents)
         self.assertIn('http://physiomeproject.org/workflow/1.0/rdf-schema#provides', file_contents)
@@ -280,10 +279,10 @@ class WizardTestCase(_TestCase):
         self.assertNotIn('{setidentifiercontent}', file_contents)
         self.assertNotIn('{serializecontent}', file_contents)
         self.assertNotIn('{serializesetvalues}', file_contents)
-
+     
         resources_file = os.path.join(step_dir, 'resources_rc.py')
         self.assertTrue(os.path.exists(resources_file))
-
+ 
         config_file = os.path.join(step_dir, 'configuredialog.py')
         self.assertTrue(os.path.exists(config_file))
 

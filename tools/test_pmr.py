@@ -52,7 +52,7 @@ from PySide.QtCore import QSettings
 
 from mapclient.tools.pmr.pmrtool import PMRTool
 from mapclient.tools.pmr.pmrtool import PMRToolError
-from mapclient.settings.general import PMRInfo
+from mapclient.tools.pmr.settings.general import PMR
 
 workspace_home = json.dumps({
     u'workspace-home': {
@@ -88,10 +88,10 @@ class PMRToolTestCase(TestCase):
         # Insert profanity here: ________________
 
         # now we make our info
-        info = PMRInfo()
+        info = PMR()
 
         self.endpoints = [
-            (info.host + '/pmr2-dashboard',
+            (info.host() + '/pmr2-dashboard',
                 TestAdapter(stream=workspace_home)),
 
             ('http://example.com/dashboard/addworkspace',
@@ -119,7 +119,7 @@ class PMRToolTestCase(TestCase):
                     # XXX need to make this a real thing when we test that
                     # responses from server matters.
                     stream='{"url": "http://example.com/hgrepo", '
-                        '"storage": "mercurial"}',
+                        '"storage": "git"}',
                 )
             ),
 
@@ -128,7 +128,7 @@ class PMRToolTestCase(TestCase):
                     # XXX need to make this a real thing when we test that
                     # responses from server matters.
                     stream='{"url": "http://example.com/w/1", '
-                        '"storage": "mercurial"}',
+                        '"storage": "git"}',
                 )
             ),
 
@@ -138,7 +138,7 @@ class PMRToolTestCase(TestCase):
                 )
             ),
 
-            (info.host + '/search',
+            (info.host() + '/search',
                 TestAdapter(
                     stream='[{"title": "Test Workspace", '
                            '"target": "http://example.com/w/1"}]',
@@ -162,20 +162,24 @@ class PMRToolTestCase(TestCase):
             for url, adapter in endpoints:
                 session.mount(url, adapter)
             return session
-        tool = PMRTool()
+        
+        pmr_info = PMR()
+        tool = PMRTool(pmr_info)
         tool.make_session = make_session
         return tool
 
     def test_make_session_no_access(self):
-        tool = PMRTool()
+        pmr_info = PMR()
+        tool = PMRTool(pmr_info)
         session = tool.make_session()
         self.assertFalse(isinstance(session, OAuth1Session))
         # Make sure this really is a requests.Session
         self.assertTrue(isinstance(session, Session))
 
     def test_make_session_with_access(self):
-        tool = PMRTool()
-        info = PMRInfo()
+        pmr_info = PMR()
+        tool = PMRTool(pmr_info)
+        info = PMR()
         info.update_token('test', 'token')
         session = tool.make_session()
         self.assertTrue(isinstance(session, OAuth1Session))
@@ -187,19 +191,19 @@ class PMRToolTestCase(TestCase):
         self.assertFalse(self._tool.hasDVCS(self.working_dir))
 
     def testAddWorkspace(self):
-        info = PMRInfo()
+#         info = PMR()
         location = self._tool.addWorkspace('my title', 'my description')
         self.assertTrue(location.startswith('http://'))
 
     def testGetDashboard(self):
-        info = PMRInfo()
+#         info = PMR()
         d = self._tool.getDashboard()
         self.assertTrue('workspace-home' in d)
         self.assertTrue('workspace-add' in d)
 
     def test_requestTemporaryPassword(self):
         # Available with access
-        info = PMRInfo()
+        info = PMR()
         info.update_token('test', 'token')
 
         result = self._tool.requestTemporaryPassword('http://example.com/w/1')
@@ -222,9 +226,9 @@ class PMRToolTestCase(TestCase):
         self.assertEqual(results[0]['title'], 'Test Workspace')
 
     def test_search_failure(self):
-        info = PMRInfo()
+        info = PMR()
         tool = self.make_tool(endpoints=[
-            (info.host + '/search',
+            (info.host() + '/search',
                 TestAdapter(stream='Invalid', status=403)
             ),
         ])
@@ -248,8 +252,8 @@ class PMRToolTestCase(TestCase):
 
     def test_hasAccess(self):
         # update tokens using another instance
-        info = PMRInfo()
-        t = PMRTool()
+        info = PMR()
+        t = PMRTool(info)
 
         # Fresh token should have no access
         self.assertFalse(t.hasAccess())

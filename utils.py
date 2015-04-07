@@ -18,7 +18,7 @@ This file is part of MAP Client. (http://launchpad.net/mapclient)
     along with MAP Client.  If not, see <http://www.gnu.org/licenses/>..
 '''
 
-import re
+import re, sys
 
 class ConsumeOutput(object):
     def __init__(self):
@@ -65,4 +65,25 @@ def parseUnitTestOutput(filename):
             del lines[0]
 
     return rc, passed, failed
+
+def createTestApplication():
+    from PySide import QtCore, QtGui
+    
+    from mapclient.settings.info import ORGANISATION_DOMAIN, ORGANISATION_NAME, APPLICATION_NAME, ABOUT
+    
+    test_app = QtGui.QApplication.instance()
+    if test_app is None:
+        test_app = QtGui.QApplication(sys.argv)
+    
+    def setApplicationsSettings(app):
+        
+        app.setOrganizationDomain(ORGANISATION_DOMAIN)
+        app.setOrganizationName(ORGANISATION_NAME)
+        app.setApplicationName(APPLICATION_NAME + ' TEST')
+        app.setApplicationVersion(ABOUT['version'])
+        QtCore.QSettings.setDefaultFormat(QtCore.QSettings.IniFormat)
+    
+    setApplicationsSettings(test_app)
+    
+    return test_app
 

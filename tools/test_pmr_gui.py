@@ -19,17 +19,11 @@ This file is part of MAP Client. (http://launchpad.net/mapclient)
 '''
 import unittest, sys
 
-from PySide import QtGui
-
-from mapclient.settings import info
+from utils import createTestApplication
 
 DISABLE_GUI_TESTS = True
 
-app = QtGui.QApplication('testpmr')
-app.setOrganizationDomain(info.ORGANISATION_DOMAIN)
-app.setOrganizationName(info.ORGANISATION_NAME)
-app.setApplicationName(info.APPLICATION_NAME)
-app.setApplicationVersion(info.ABOUT['version'])
+createTestApplication()
 
 
 class PMRSearchDialogTestCase(unittest.TestCase):

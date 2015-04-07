@@ -18,13 +18,15 @@ This file is part of MAP Client. (http://launchpad.net/mapclient)
     along with MAP Client.  If not, see <http://www.gnu.org/licenses/>..
 '''
 import unittest
-import re, os, sys
+import re, os
 
 from PySide import QtGui
 
 from tests import utils
 from mapclient.tools.annotation.annotationtool import AnnotationTool, _SECTION_HEADER_RE, _NAMESPACE_RE
 from mapclient.tools.annotation.annotationdialog import AnnotationDialog
+
+utils.createTestApplication()
 
 DISABLE_GUI_TESTS = False
 

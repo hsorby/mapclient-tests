@@ -19,24 +19,34 @@ This file is part of MAP Client. (http://launchpad.net/mapclient)
 '''
 import unittest
 
-import os, sys
+import os
 
-from PySide import QtGui
+from PySide import QtCore
 
-from mapclient.settings.info import setApplicationsSettings
 from mapclient.settings.general import getLogDirectory
+from tests.utils import createTestApplication
 
-test_app = QtGui.QApplication.instance()
-if test_app is None:
-    test_app = QtGui.QApplication(sys.argv)
-
-setApplicationsSettings(test_app)
+createTestApplication()
 
 class GeneralTestCase(unittest.TestCase):
 
 
+    def tearDown(self):
+        ll = getLogDirectory()
+        if os.path.exists(ll):
+            os.rmdir(ll)
+            
+        cf = QtCore.QSettings().fileName()
+        if os.path.exists(cf):
+            os.remove(cf)
+            
+        cd, _ = os.path.splitext(cf)
+        if os.path.exists(cd):
+            os.rmdir(cd)
+            
     def testGetLogLocation(self):
         ll = getLogDirectory()
         self.assertTrue(os.path.exists(ll))
         self.assertTrue(os.access(ll, os.W_OK | os.X_OK))
+        
         
